@@ -3,5 +3,5 @@ const router = express.Router();
 const demo = require('../controllers/demo');
 
 router.get('/new', demo.new)
-
+router.get("/demomodels",demo.demomodels)
 module.exports = router;
