@@ -1,16 +1,16 @@
 const mongoose=require("mongoose");
 const demoSchema= new mongoose.Schema({
-    name: {
+    title: {
         type: String,
         required : true,
     },
-    email:{
+    body:{
         type: String,
         required:true,
     },
-    mobile : {
+    id : {
         type: Number,
     }
 })
-const demoModel =mongoose.model('demoModel',demoSchema);
-module.exports=demoModel;
+const testModel =mongoose.model('testModel',demoSchema);
+module.exports=testModel;

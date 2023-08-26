@@ -5,9 +5,9 @@ const ejsMate=require("ejs-mate");
 const methodOverride=require("method-override");
 const demoRoutes = require('./routes/demo');
 const mongoose=require("mongoose");
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/Demo';
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/test';
 const MongoStore = require('connect-mongo');
-const demoModel=require("./models/demo")
+const testModel=require("./models/demo")
 mongoose.set("strictQuery", true);
 mongoose.connect(dbUrl,{
     useNewUrlParser:true,
