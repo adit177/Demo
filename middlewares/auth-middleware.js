@@ -1,5 +1,22 @@
 const jwt =require('jsonwebtoken')
 const UserModel =require('../models/user.js')
+const ExpressError = require('../utils/ExpressError');
+const {userSchema} = require('../schema.js');
+
+
+var validateUser = async (req, res, next) => {
+  const { error } = userSchema.validate(req.body);
+  // res.send("HEllow");
+  if (error) {
+      const msg = error.details.map(el => el.message).join(',')
+      console.log(msg);
+      throw new ExpressError(msg, 400)
+      
+  } else {
+      next();
+  }
+}
+
 
 var checkUserAuth = async (req, res, next) => {
   let token
@@ -26,4 +43,4 @@ var checkUserAuth = async (req, res, next) => {
   }
 }
 
-module.exports= checkUserAuth;
+module.exports= {checkUserAuth, validateUser};
