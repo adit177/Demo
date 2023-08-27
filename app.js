@@ -17,6 +17,8 @@ const testModel=require("./models/demo")
 const cloudinary = require('cloudinary').v2;
 // const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fileUpload=require("express-fileupload");
+const cron=require("node-cron");
+const moment=require("moment");
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 var c=0;
@@ -92,6 +94,15 @@ app.post("/upload",async(req,res)=>{
 //         next(error);
 //     }
 // })
+/////////// Job Scheduling    ///////////////////
+
+cron.schedule('* 9 15 * *', ()=>{
+    console.log('Message will display at 9 am daily.',moment().format('DD MMM YYYY hh:mm:ss'));
+    // send email code
+},{
+    timezone: 'Asia/Kolkata'
+}
+)
 
 
 io.on('connection', function(socket){
