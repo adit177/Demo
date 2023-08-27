@@ -12,9 +12,10 @@ const cors=require("cors")
 const userRoutes=require('./routes/user');
 const dotenv=require("dotenv")
 dotenv.config();
-app.use(express.json());
+
 const testModel=require("./models/demo")
 const cloudinary = require('cloudinary').v2;
+const helmet= require("helmet")
 // const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fileUpload=require("express-fileupload");
 const cron=require("node-cron");
@@ -22,6 +23,9 @@ const moment=require("moment");
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 var c=0;
+app.use(express.json({limit:"20kb"}));
+app.use(helmet());
+// Secure Header http
 
 
 cloudinary.config({
