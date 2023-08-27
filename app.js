@@ -12,7 +12,7 @@ const cors=require("cors")
 const userRoutes=require('./routes/user');
 const dotenv=require("dotenv")
 dotenv.config();
-
+const stripe=require("stripe")("sk_test_51NjfJWSIXALZOCZyOrn49M4TetfMSKJKYpWxTs2eOkFKaeTiDhm4K23zmtzXHgGMMLvUmDJ9MwQIEFO0sszfPhi5002wkSVZJ8")
 const testModel=require("./models/demo")
 const cloudinary = require('cloudinary').v2;
 const helmet= require("helmet")
@@ -23,10 +23,12 @@ const moment=require("moment");
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 var c=0;
-app.use(express.json({limit:"20kb"}));
-app.use(helmet());
-// Secure Header http
 
+const getRawBody=require("raw-body")
+app.use(helmet());
+const bodyparser=require("body-parser")
+// Secure Header http
+app.use(bodyparser.urlencoded({ extended: false }));
 
 cloudinary.config({
     cloud_name: 'dcph7qs81',
@@ -81,6 +83,30 @@ app.post("/upload",async(req,res)=>{
     
 })
 
+// Webhook
+
+app.post('/hooks',express.raw({type: 'application/json'}),async(req,res)=>{
+    let signningSecret="whsec_f9ee4187c1ecb6cc6e63f1fd8fc66dbdcd4e2c1e1f6bab634ad542b131c0f915";
+
+    const payload=req.rawBody || req.body;
+    const sig=req.headers['stripe-signature']
+
+    let event;
+
+    try{
+        event=stripe.webhooks.constructEvent(payload,sig,signningSecret);
+    }catch(err){
+        console.log(err);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+        
+    }
+    console.log(req.body);
+    console.log(event.type)
+    console.log(event.data.object)
+    console.log(event.data.object.id)
+    res.json({success:true})
+})
+
 // app.delete("/delete/:id",async(req,res,next)=>{
 //     try{
 //         const img=await img.findById(req.params.id);
@@ -122,7 +148,7 @@ io.on('connection', function(socket){
   app.get("/",(req,res)=>{
     res.render("home")
 });
-  
+app.use(express.json({limit:"20kb"}));
 
 const port=process.env.PORT || 4000;
 server.listen(4000,()=>{
