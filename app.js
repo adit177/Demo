@@ -17,10 +17,11 @@ const testModel=require("./models/demo")
 const cloudinary = require('cloudinary').v2;
 // const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fileUpload=require("express-fileupload");
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+var c=0;
 
 
-// // const app=express();
-// app.use(express.json());
 cloudinary.config({
     cloud_name: 'dcph7qs81',
     api_key: '836284348737676',
@@ -92,11 +93,26 @@ app.post("/upload",async(req,res)=>{
 //     }
 // })
 
-app.get("/",(req,res)=>{
+
+io.on('connection', function(socket){
+    console.log("a user connected");
+    c++;
+    io.emit('usercnt',c);
+    socket.on('disconnect',function(){
+      console.log("a user disconnected");
+      c--;
+      io.emit('usercnt',c);
+    })
+  })
+  app.get("/",(req,res)=>{
     res.render("home")
 });
+  
 
 const port=process.env.PORT || 4000;
-app.listen(port,()=>{
-    console.log(`Serving on port ${port}`)
-})
+server.listen(4000,()=>{
+    console.log("Listening");
+  })
+// app.listen(port,()=>{
+//     console.log(`Serving on port ${port}`)
+// })
