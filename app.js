@@ -15,7 +15,7 @@ dotenv.config();
 const stripe=require("stripe")("sk_test_51NjfJWSIXALZOCZyOrn49M4TetfMSKJKYpWxTs2eOkFKaeTiDhm4K23zmtzXHgGMMLvUmDJ9MwQIEFO0sszfPhi5002wkSVZJ8")
 const testModel=require("./models/demo")
 const cloudinary = require('cloudinary').v2;
-const helmet= require("helmet")
+
 // const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fileUpload=require("express-fileupload");
 const cron=require("node-cron");
@@ -25,7 +25,7 @@ const io = require('socket.io')(server);
 var c=0;
 
 const getRawBody=require("raw-body")
-app.use(helmet());
+
 const bodyparser=require("body-parser")
 // Secure Header http
 app.use(bodyparser.urlencoded({ extended: false }));
@@ -65,7 +65,23 @@ app.use(fileUpload({
     }
 }))
 
+io.on('connection', function(socket){
+    console.log("a user connected");
+    c++;
+    io.emit('usercnt',c);
+    socket.on('disconnect',function(){
+      console.log("a user disconnected");
+      c--;
+      io.emit('usercnt',c);
+    })
+})
+app.get("/",(req,res)=>{
+    res.render("home")
+});
 
+// app.get("/", function(req,res){
+//     res.sendFile(__dirname+"/index.html");
+//   })
 app.use('/demo', demoRoutes);
 app.use('/demo/user',userRoutes);
 
@@ -131,27 +147,13 @@ cron.schedule('* 9 15 * *', ()=>{
     // send email code
 },{
     timezone: 'Asia/Kolkata'
-}
-)
-
-
-io.on('connection', function(socket){
-    console.log("a user connected");
-    c++;
-    io.emit('usercnt',c);
-    socket.on('disconnect',function(){
-      console.log("a user disconnected");
-      c--;
-      io.emit('usercnt',c);
-    })
-  })
-  app.get("/",(req,res)=>{
-    res.render("home")
-});
+})
 app.use(express.json({limit:"20kb"}));
 
+
+  
 const port=process.env.PORT || 4000;
-server.listen(4000,()=>{
+server.listen(port,()=>{
     console.log("Listening");
   })
 // app.listen(port,()=>{

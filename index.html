@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Demo</title>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket=io();
+        socket.on('usercnt',function(msg){
+            document.getElementById("count").innerHTML=msg;
+        })
+    </script>
+</head>
+<body>
+    <span id="count"> 0</span> user online
+</body>
+</html>
