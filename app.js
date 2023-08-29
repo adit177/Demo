@@ -83,7 +83,7 @@ app.get("/",(req,res)=>{
 //     res.sendFile(__dirname+"/index.html");
 //   })
 app.use('/demo', demoRoutes);
-app.use('/demo/user',userRoutes);
+
 
 app.post("/upload",async(req,res)=>{
     const file=req.files.image;
@@ -149,7 +149,7 @@ cron.schedule('* 9 15 * *', ()=>{
     timezone: 'Asia/Kolkata'
 })
 app.use(express.json({limit:"20kb"}));
-
+app.use('/demo/user',userRoutes);
 
   
 const port=process.env.PORT || 4000;
